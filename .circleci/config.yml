@@ -31,6 +31,6 @@ jobs:
             only: 
               - main
             ignore:
-              - develop
-          name: 'Deploy to Firebase Hosting.'
+              - branch1
+          name: 'Deploy to Firebase Hosting..'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
