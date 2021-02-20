@@ -8,7 +8,8 @@
     "test": "ng test --sourcemaps=false",
     "test-once": "ng test --watch=false --progress=false",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "ci": "npm run lint && npm test"
   },
   "private": true,
   "dependencies": {

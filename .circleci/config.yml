@@ -1,21 +1,63 @@
-version: 2
-jobs:
-  build:
+
+aliases:
+  - &container_config
+    working_directory: ~/repo
+    context: learningcircleci
     docker:
       - image: circleci/node:12.0
-    working_directory: ~/repo
     environment:
       NODE_ENV: test
+
+version: 2
+jobs:
+  ## ====================
+  ## Section: Setup
+  ## ====================
+  install_packages:
+    <<: *container_config
     steps:
-      - run: node --version; npm --version
       - checkout
-      - run: npm install; npm install --no-save typescript
       - run:
-          name: 'Karma Unit Test'
-          command: 'npm run test-once'
+          name: Log versions
+          command: |
+            echo "bash: $(bash --version)"
+            echo "git: $(git --version)"
+            echo "node: $(node --version)"
+            echo "npm: $(npm --version)"
+
+      - restore_cache:
+          name: Restore npm cache
+          key: dependency-cache-{{checksum "package.json"}}
+
+      - run:
+        name: Install packages
+        command: npm ci
+
+
+  
+  ## ====================
+  ## Section: Build
+  ## ====================
+  build:
+    <<: *container_config
+    steps:
+      - checkout
       - run:
           name: 'Build Project'
           command: 'npm run build'
+
+  ## ====================
+  ## Section: Deploy
+  ## ====================
+  deploy:
+    <<: *container_config
+    branches:
+      only: 
+        - master
+      ignore:
+        - develop
+    steps:
+      - checkout
       - run:
           name: 'Deploy to Firebase Hosting'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
