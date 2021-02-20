@@ -1,74 +1,23 @@
 version: 2
 jobs:
-  ## ====================
-  ## Section: Setup
-  ## ====================
-
-  install_packages:
-    working_directory: ~/repo
-    context: learningcircleci
-    docker:
-      - image: circleci/node:12.0
-    environment:
-      NODE_ENV: test
-    steps:
-      - checkout
-
-      - run:
-          name: Log versions
-          command: |
-            echo "bash: $(bash --version)"
-            echo "git: $(git --version)"
-            echo "node: $(node --version)"
-            echo "npm: $(npm --version)"
-
-      - restore_cache:
-          name: Restore npm cache
-          key: dependency-cache-{{checksum "package.json"}}
-
-      - run:
-          name: Install packages
-          command: npm ci
-
-
-  
-  ## ====================
-  ## Section: Build
-  ## ====================
-
   build:
-    working_directory: ~/repo
-    context: learningcircleci
-    docker:
-      - image: circleci/node:12.0
-    environment:
-      NODE_ENV: test
-    steps:
-      - checkout
-
-      - run:
-          name: 'Build Project'
-          command: 'npm run build'
-
-  ## ====================
-  ## Section: Deploy
-  ## ====================
-
-  deploy:
-    working_directory: ~/repo
-    context: learningcircleci
-    docker:
-      - image: circleci/node:12.0
-    environment:
-      NODE_ENV: test
     branches:
       only: 
         - master
       ignore:
         - develop
+    docker:
+      - image: circleci/node:12.0
+    working_directory: ~/repo
+    environment:
+      NODE_ENV: test
     steps:
+      - run: node --version; npm --version
       - checkout
-
+      - run: npm install; npm install --no-save typescript
+      - run:
+          name: 'Build Project'
+          command: 'npm run build'
       - run:
           name: 'Deploy to Firebase Hosting'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
