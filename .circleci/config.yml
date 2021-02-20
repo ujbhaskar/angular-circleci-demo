@@ -21,7 +21,13 @@ jobs:
             echo "git: $(git --version)"
             echo "node: $(node --version)"
             echo "npm: $(npm --version)"
-      - run: npm install; npm install --no-save typescript
+      - restore_cache:
+          name: Restore npm cache
+          key: dependency-cache-{{checksum "package.json"}}
+
+      - run:
+          name: Install packages
+          command: npm ci
       - run:
           name: 'Build Project'
           command: 'npm run build'
