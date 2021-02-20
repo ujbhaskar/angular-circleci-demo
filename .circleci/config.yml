@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  job1:
     branches:
       only: 
         - main
@@ -14,10 +14,10 @@ jobs:
     steps:
       - run: node --version; npm --version
       - checkout
-      - run: npm install; npm install --no-save typescript
       - run:
-          name: 'Build Project'
-          command: 'npm run build'
-      - run:
-          name: 'Deploy to Firebase Hosting'
-          command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
+          name: Log versions
+          command: |
+            echo "bash: $(bash --version)"
+            echo "git: $(git --version)"
+            echo "node: $(node --version)"
+            echo "npm: $(npm --version)"
