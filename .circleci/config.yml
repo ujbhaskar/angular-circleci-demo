@@ -14,6 +14,13 @@ jobs:
     steps:
       - run: node --version; npm --version
       - checkout
+      - run:
+          name: Log versions
+          command: |
+            echo "bash: $(bash --version)"
+            echo "git: $(git --version)"
+            echo "node: $(node --version)"
+            echo "npm: $(npm --version)"
       - run: npm install; npm install --no-save typescript
       - run:
           name: 'Build Project'
