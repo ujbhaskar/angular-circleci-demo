@@ -13,10 +13,12 @@ jobs:
   ## ====================
   ## Section: Setup
   ## ====================
+
   install_packages:
     <<: *container_config
     steps:
       - checkout
+
       - run:
           name: Log versions
           command: |
@@ -38,10 +40,12 @@ jobs:
   ## ====================
   ## Section: Build
   ## ====================
+
   build:
     <<: *container_config
     steps:
       - checkout
+
       - run:
           name: 'Build Project'
           command: 'npm run build'
@@ -49,6 +53,7 @@ jobs:
   ## ====================
   ## Section: Deploy
   ## ====================
+
   deploy:
     <<: *container_config
     branches:
@@ -58,6 +63,7 @@ jobs:
         - develop
     steps:
       - checkout
+
       - run:
           name: 'Deploy to Firebase Hosting'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
