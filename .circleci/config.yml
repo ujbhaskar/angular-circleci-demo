@@ -37,8 +37,8 @@ jobs:
           key: dependency-cache-{{checksum "package.json"}}
 
       - run:
-        name: Install packages
-        command: npm ci
+          name: Install packages
+          command: npm ci
 
 
   
