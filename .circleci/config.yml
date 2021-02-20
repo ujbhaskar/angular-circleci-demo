@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.11.2-browsers
+    working_directory: ~/repo
+    environment:
+      NODE_ENV: test
+    steps:
+      - run: node --version; npm --version
+      - checkout
+      - run: npm install; npm install --no-save typescript
+      - run:
+          name: 'Build Project'
+          command: 'npm run build'
+      - run:
+          name: 'Deploy to Firebase Hosting'
+          command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
