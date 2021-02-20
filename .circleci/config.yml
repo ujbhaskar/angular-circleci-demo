@@ -15,7 +15,12 @@ jobs:
   ## ====================
 
   install_packages:
-    <<: *container_config
+    working_directory: ~/repo
+    context: learningcircleci
+    docker:
+      - image: circleci/node:12.0
+    environment:
+      NODE_ENV: test
     steps:
       - checkout
 
@@ -42,7 +47,12 @@ jobs:
   ## ====================
 
   build:
-    <<: *container_config
+    working_directory: ~/repo
+    context: learningcircleci
+    docker:
+      - image: circleci/node:12.0
+    environment:
+      NODE_ENV: test
     steps:
       - checkout
 
@@ -55,7 +65,12 @@ jobs:
   ## ====================
 
   deploy:
-    <<: *container_config
+    working_directory: ~/repo
+    context: learningcircleci
+    docker:
+      - image: circleci/node:12.0
+    environment:
+      NODE_ENV: test
     branches:
       only: 
         - master
