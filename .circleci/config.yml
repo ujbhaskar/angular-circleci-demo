@@ -45,9 +45,9 @@ workflows:
   build-job:
     jobs:
       - build:
-        context: assess
+          context: assess
       - deploy:
-        context: assess
+          context: assess
           requires:
             - build
           filters:
