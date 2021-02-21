@@ -1,5 +1,30 @@
 version: 2
 jobs:
+  run_install:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/repo
+    environment:
+      NODE_ENV: test
+    steps:
+      - checkout
+      - run:
+          name: Log versions
+          command: |
+            echo "bash: $(bash --version)"
+            echo "git: $(git --version)"
+            echo "node: $(node --version)"
+            echo "npm: $(npm --version)"
+      -run:
+          name: Install ng globally
+          command: npm install -g @angular/cli
+      - restore_cache:
+          name: Restore npm cache
+          key: dependency-cache-{{checksum "package.json"}}
+      - run:
+          name: Install packages
+          command: npm ci
+
   build:
     docker:
       - image: circleci/node:12.0
@@ -10,29 +35,10 @@ jobs:
       - run: node --version; npm --version
       - checkout
       - run:
-          name: Log versions
-          command: |
-            echo "bash: $(bash --version)"
-            echo "git: $(git --version)"
-            echo "node: $(node --version)"
-            echo "npm: $(npm --version)"
-      - restore_cache:
-          name: Restore npm cache
-          key: dependency-cache-{{checksum "package.json"}}
-
-      - run:
-          name: Install packages
-          command: npm ci
-      - run:
           name: 'Build Project'
           command: 'npm run build'
 
   deploy:
-    branches:
-      only: 
-        - main
-      ignore:
-        - branch1
     docker:
       - image: circleci/node:12.0
     working_directory: ~/repo
@@ -43,3 +49,17 @@ jobs:
       - run:
           name: 'Deploy to Firebase Hosting..'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
+workflows:
+  version: 2
+  my-workflow:
+    jobs:
+      - run_install
+      - build:
+          requires:
+            - run_install
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
