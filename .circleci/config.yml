@@ -1,7 +1,62 @@
-version: 2.1
-orbs:
-  node: circleci/node@3.0.0
+version: 2
+jobs:
+  run_install:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/repo
+    environment:
+      NODE_ENV: test
+    steps:
+      - checkout
+      - run:
+          name: Log versions
+          command: |
+            echo "bash: $(bash --version)"
+            echo "git: $(git --version)"
+            echo "node: $(node --version)"
+            echo "npm: $(npm --version)"
+      - restore_cache:
+          name: Restore npm cache
+          key: dependency-cache-{{checksum "package.json"}}
+      - run:
+          name: Install packages
+          command: npm ci
+
+  build:
+    docker:
+      - image: circleci/node:12.0
+    working_directory: ~/repo
+    environment:
+      NODE_ENV: test
+    steps:
+      - run: node --version; npm --version
+      - checkout
+      - run:
+          name: 'Build Project'
+          command: 'npm run build'
+
+  deploy:
+    docker:
+      - image: circleci/node:12.0
+    working_directory: ~/repo
+    environment:
+      NODE_ENV: test
+    steps:
+      - checkout
+      - run:
+          name: 'Deploy to Firebase Hosting..'
+          command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
 workflows:
-  node-tests:
+  version: 2
+  my-workflow:
     jobs:
-      - node/test
+      - run_install
+      - build:
+          requires:
+            - run_install
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
