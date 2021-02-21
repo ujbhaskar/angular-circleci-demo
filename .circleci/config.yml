@@ -38,16 +38,17 @@ jobs:
           name: Install Firebase
           command: npm install firebase-tools
       - run:
+        name: 'Build Project'
+        command: 'npm run build'
+      - run:
           name: 'Deploy to Firebase Hosting..'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
 workflows:
   version: 2
   build-job:
     jobs:
-      - build:
-          context: assess
+      - build
       - deploy:
-          context: assess
           requires:
             - build
           filters:
