@@ -47,17 +47,16 @@ jobs:
           name: 'Deploy to Firebase Hosting..'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
 workflows:
+  version: 2
   my-workflow:
     jobs:
       - run_install
-      - build
-        requires:
-          - run_install
-      - deploy
+      - build:
+          requires:
+            - run_install
+      - deploy:
           requires:
             - build
           filters:
             branches:
               only: main
-
-              
