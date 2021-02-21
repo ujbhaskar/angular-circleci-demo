@@ -26,14 +26,32 @@ jobs:
       - run:
           name: 'Build Project'
           command: 'npm run build'
-  deploy:
+  build_deploy:
     docker:
       - image: circleci/node:12.0
     working_directory: ~/repo
     environment:
       NODE_ENV: test
     steps:
+      - run: node --version; npm --version
       - checkout
+      - run:
+          name: Log versions
+          command: |
+            echo "bash: $(bash --version)"
+            echo "git: $(git --version)"
+            echo "node: $(node --version)"
+            echo "npm: $(npm --version)"
+      - restore_cache:
+          name: Restore npm cache
+          key: dependency-cache-{{checksum "package.json"}}
+
+      - run:
+          name: Install packages
+          command: npm ci
+      - run:
+          name: 'Build Project'
+          command: 'npm run build'
       - run:
           name: 'Deploy to Firebase Hosting..'
           command: './node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN'
@@ -42,10 +60,12 @@ workflows:
   version: 2
   my-workflow:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+      - build_deploy:
           filters:
             branches:
               only: main
+      - build:
+        filters:
+          branches:
+            ignore: main
+            
