@@ -17,7 +17,7 @@ jobs:
             echo "npm: $(npm --version)"
       - run:
           name: Install ng globally
-          command: npm install -g @angular/cli
+          command: sudo npm install -g @angular/cli
       - restore_cache:
           name: Restore npm cache
           key: dependency-cache-{{checksum "package.json"}}
