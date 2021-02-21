@@ -65,7 +65,7 @@ workflows:
             branches:
               only: main
       - build:
-        filters:
-          branches:
-            ignore: main
-            
+          filters:
+            branches:
+              ignore: main
+
